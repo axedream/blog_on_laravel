@@ -13,6 +13,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', function () {  return view('welcome'); });
+//Route::resource('rest','App\Http\Controllers\RestTestController')->names('restTest');
+Route::group(['namespace'=> 'App\Http\Controllers\Blog','prefix'=>'blog'],function() {
+    Route::resource('posts','PostController')->names('blog.posts');
 });
+//Route::resource('posts','App\Http\Controllers\Blog\PostController')->names('restPost');
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
