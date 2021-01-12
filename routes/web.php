@@ -21,9 +21,14 @@ Route::group(['namespace'=> 'App\Http\Controllers\Blog','prefix'=>'blog'],functi
 //Route::resource('posts','App\Http\Controllers\Blog\PostController')->names('restPost');
 
 Auth::routes();
-
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Auth::routes();
+$groupData = [
+    'namespace' => 'App\Http\Controllers\Blog\Admin',
+    'prefix' => 'admin/blog'
+];
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::group($groupData,function(){
+    $methods = ['index','edit','update','create','store',];
+    Route::resource('categories','CategoryController')->only($methods)->names('blog.admin.categories');
+});
