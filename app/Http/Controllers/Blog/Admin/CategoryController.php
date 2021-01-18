@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Blog\Admin;
 use App\Models\BlogCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Http\Requests\BlogCategoryUpdateRequest;
+use App\Http\Requests\BlogCategoryCreateRequest;
 
 class CategoryController extends BaseController
 {
@@ -26,7 +28,9 @@ class CategoryController extends BaseController
      */
     public function create()
     {
-        dd(__METHOD__);
+        $item = new BlogCategory();
+        $categoryList = BlogCategory::all();
+        return view('blog.admin.categories.edit',compact('item','categoryList'));
     }
 
     /**
@@ -35,9 +39,24 @@ class CategoryController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BlogCategoryCreateRequest $request)
     {
-        dd(__METHOD__);
+        $data = $request->input();
+        if (empty($data['slug'])) {
+            $data['slug'] = Str::of($data['title'])->slug();
+        }
+
+        $item = new BlogCategory($data);
+
+        //dd($item);
+
+        $item->save();
+
+        if ($item) {
+            return redirect()->route('blog.admin.categories.edit',[$item->id])->with(['success'=>'Успешно сохранено']);
+        } else {
+            return back()->withErrors(['msg'=>'Ошибка сохранения'])->withInput();
+        }
     }
 
     /**
@@ -62,30 +81,6 @@ class CategoryController extends BaseController
      */
     public function update(BlogCategoryUpdateRequest $request, $id)
     {
-        /*
-            $rules = [
-                'title' => 'required|min:5|max:200',
-                'slug'  =>  'max:200',
-                'description' => 'string|min:3|max:500',
-                'parent_id' => 'required|integer|exists:blog_categories,id',
-            ];
-
-            //$validateData = $this->validate($request,$rules);
-
-            //$validateData = $request->validate($rules);   //редирект в случае ошибки
-
-
-            $validator = \Validator::make($request->all(),$rules);
-            $validateData[] = $validator->passes();     //и выполнит проверку, заполняет даные ошибок, вернет TRUE если ОК, и FALSE если НЕ ОК и есть ошибки
-            $validateData[] = $validator->validate(); //редиректит если данные не валидны
-            $validateData[] = $validator->valid();      // те поля которые валидны
-            $validateData[] = $validator->failed();     // те поля которые не валидны
-            $validateData[] = $validator->errors();     // сообщения о ошибках
-            $validateData[] = $validator->fails();      // TRUE = если ошибки, FALSE = нет ошибок
-
-            dd($validateData);
-        */
-
         $item = BlogCategory::find($id);
         if (empty($item)) {
             return back()->withErrors(['msg'=>"Запись ID-[{$id}] не найдена"])->withInput();
