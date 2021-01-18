@@ -53,8 +53,7 @@
                             <textarea name="description"
                                       id="description"
                                       class="form-control"
-                                      row="3">
-                                {{$item->description}}
+                                      row="3">{{old('description',$item->description)}}
                             </textarea>
                         </div>
 
