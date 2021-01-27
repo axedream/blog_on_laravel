@@ -11,6 +11,7 @@ class BlogCategory extends Model
     use HasFactory;
     use SoftDeletes;
 
+    //элементы которые можно заполнять
     protected $fillable = [
         'title',
         'slug',
